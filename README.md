@@ -27,46 +27,6 @@ flowchart TD
     APP -->|File download response| U
 ```
 
-## Repository Structure
-
-```mermaid
-flowchart TD
-    ROOT[LAN_filesever2/] --> APP[app.py]
-    ROOT --> AUTH[auth.py]
-    ROOT --> CFG[config.py]
-    ROOT --> DB[db.py]
-    ROOT --> FS[file_service.py]
-    ROOT --> REQ[requirements.txt]
-    ROOT --> README[README.md]
-    ROOT --> PSTRUCT[PROJECT_STRUCTURE.md]
-    ROOT --> DESIGN[LAN_fileserver.md]
-    ROOT --> LIC[LICENSE]
-
-    ROOT --> TEMPLATES[templates/]
-    TEMPLATES --> BASE[base.html]
-    TEMPLATES --> LANDING[landing.html]
-    TEMPLATES --> LOGIN[login.html]
-    TEMPLATES --> REGISTER[register.html]
-    TEMPLATES --> FILES[files.html]
-
-    ROOT --> STATIC[static/]
-    STATIC --> STYLES[styles.css]
-
-    ROOT --> DOCS[docs/]
-    DOCS --> GETSTARTED[GETTING_STARTED.md]
-
-    ROOT --> SCRIPTS[scripts/]
-    SCRIPTS --> DEVRUN[dev_run.sh]
-
-    ROOT --> TESTS[tests/]
-    TESTS --> TESTREADME[README.md]
-
-    ROOT --> INSTANCE[instance/]
-    INSTANCE --> SQLITE[lan_fileserver.db]
-
-    ROOT --> UPLOADS[uploads/]
-```
-
 ## Features
 
 - Landing, sign-up, sign-in, and sign-out flows
