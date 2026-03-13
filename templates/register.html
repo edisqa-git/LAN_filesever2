@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Register | LAN File Server{% endblock %}
+{% block content %}
+<section class="panel form-panel">
+  <h2>Create Account</h2>
+  <form method="post">
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required />
+
+    <label for="confirm_password">Confirm Password</label>
+    <input id="confirm_password" name="confirm_password" type="password" required />
+
+    <button type="submit">Sign Up</button>
+  </form>
+</section>
+{% endblock %}

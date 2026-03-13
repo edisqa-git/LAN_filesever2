@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}LAN File Server{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <h1><a href="{{ url_for('landing') }}">LAN File Server</a></h1>
+        <nav>
+          {% if session.get('user_id') %}
+          <span class="user-tag">{{ session.get('username') }}</span>
+          <form class="inline" action="{{ url_for('auth.logout') }}" method="post">
+            <button type="submit">Sign Out</button>
+          </form>
+          {% else %}
+          <a href="{{ url_for('auth.register') }}">Sign Up</a>
+          <a href="{{ url_for('auth.login') }}">Sign In</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class="flash-list toast-container">
+        {% for category, message in messages %}
+        <li class="flash toast {{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+    <script>
+      window.addEventListener("load", function () {
+        document.querySelectorAll(".toast").forEach(function (toast, index) {
+          setTimeout(function () {
+            toast.classList.add("toast-hide");
+            setTimeout(function () {
+              toast.remove();
+            }, 250);
+          }, 4200 + index * 300);
+        });
+      });
+    </script>
+  </body>
+</html>

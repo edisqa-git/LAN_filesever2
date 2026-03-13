@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Files | LAN File Server{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2>File Sharing</h2>
+  <p class="hint">Maximum upload size: 50 MB.</p>
+  <p class="hint">Accepted formats: {{ allowed_exts_label }}</p>
+
+  <form class="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="{{ accept_attr }}" required />
+    <button type="submit">Upload</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h3>Shared Files</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Size</th>
+          <th>Uploader</th>
+          <th>Uploaded At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in files %}
+        <tr>
+          <td>{{ f.filename }}</td>
+          <td>{{ "%.2f"|format(f.size / 1024) }} KB</td>
+          <td>{{ f.username }}</td>
+          <td>{{ f.uploaded_at }}</td>
+          <td class="actions-cell">
+            <a class="button button-small" href="{{ url_for('download_file', file_id=f.id) }}">Download</a>
+            {% if session.get('user_id') == f.uploaded_by %}
+            <form class="inline" action="{{ url_for('remove_file', file_id=f.id) }}" method="post">
+              <button class="button button-danger button-small" type="submit">Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5">No files uploaded yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
