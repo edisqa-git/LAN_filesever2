@@ -5,6 +5,7 @@ from flask import Flask, abort, flash, redirect, render_template, request, send_
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from auth import auth_bp, login_required
+from bulletin_service import create_comment, create_post, list_posts
 from config import Config
 from db import close_db, init_db
 from file_service import delete_file, get_file_by_id, list_files, save_uploaded_file
@@ -38,12 +39,14 @@ def create_app() -> Flask:
     @login_required
     def files_page():
         files = list_files()
+        bulletin_posts = list_posts()
         allowed_exts = sorted(app.config["ALLOWED_EXTENSIONS"])
         allowed_exts_label = ", ".join(f".{ext}" for ext in allowed_exts)
         accept_attr = ",".join(f".{ext}" for ext in allowed_exts)
         return render_template(
             "files.html",
             files=files,
+            bulletin_posts=bulletin_posts,
             allowed_exts_label=allowed_exts_label,
             accept_attr=accept_attr,
         )
@@ -85,6 +88,39 @@ def create_app() -> Flask:
             delete_file(file_row, session["user_id"])
             flash("File deleted.", "success")
         except PermissionError as exc:
+            flash(str(exc), "error")
+
+        return redirect(url_for("files_page"))
+
+    @app.route("/bulletin/posts", methods=["POST"])
+    @login_required
+    def create_bulletin_post():
+        title = request.form.get("title", "")
+        body = request.form.get("body", "")
+
+        try:
+            create_post(title, body, session["user_id"])
+            flash("Post published.", "success")
+        except ValueError as exc:
+            flash(str(exc), "error")
+
+        return redirect(url_for("files_page"))
+
+    @app.route("/bulletin/posts/<int:post_id>/comments", methods=["POST"])
+    @login_required
+    def create_bulletin_comment(post_id: int):
+        body = request.form.get("body", "")
+        parent_comment_id = request.form.get("parent_comment_id", "").strip()
+        try:
+            reply_to = int(parent_comment_id) if parent_comment_id else None
+        except ValueError:
+            flash("Reply target is invalid.", "error")
+            return redirect(url_for("files_page"))
+
+        try:
+            create_comment(post_id, body, session["user_id"], reply_to)
+            flash("Reply added.", "success")
+        except ValueError as exc:
             flash(str(exc), "error")
 
         return redirect(url_for("files_page"))

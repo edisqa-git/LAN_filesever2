@@ -26,6 +26,31 @@ CREATE TABLE IF NOT EXISTS files (
 );
 """
 
+BULLETIN_POSTS_SCHEMA = """
+CREATE TABLE IF NOT EXISTS bulletin_posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_by INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+"""
+
+BULLETIN_COMMENTS_SCHEMA = """
+CREATE TABLE IF NOT EXISTS bulletin_comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  post_id INTEGER NOT NULL,
+  parent_comment_id INTEGER,
+  body TEXT NOT NULL,
+  created_by INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES bulletin_posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (parent_comment_id) REFERENCES bulletin_comments(id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+"""
+
 
 def _ensure_db_parent(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -51,6 +76,8 @@ def init_db() -> None:
     db = get_db()
     db.execute(USERS_SCHEMA)
     db.execute(FILES_SCHEMA)
+    db.execute(BULLETIN_POSTS_SCHEMA)
+    db.execute(BULLETIN_COMMENTS_SCHEMA)
     db.commit()
 
 
