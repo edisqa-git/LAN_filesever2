@@ -2,6 +2,71 @@
 
 A modular Flask + SQLite LAN file-sharing web app with user authentication, file ownership controls, and HTTPS support.
 
+## What this project does
+
+LAN File Server is a small web application for sharing files inside a local network (LAN). Users can create an account, sign in, upload files (up to 50 MB), download shared files, and delete only the files they uploaded. The app is built with Flask and SQLite, with a modular structure that separates authentication, database access, and file handling. It runs with HTTPS enabled by default (development certificate) and provides browser-based pages for landing, login/register, and file management. The goal is to keep deployment simple while still enforcing basic security and ownership rules.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    U[User Browser on LAN] -->|HTTPS requests| APP[app.py Flask Entry + Routes]
+
+    APP --> AUTH[auth.py Authentication + Session]
+    APP --> FS[file_service.py File Validation + Save/List/Delete]
+    AUTH --> DB[db.py SQLite Access Helpers]
+    FS --> DB
+    FS --> UP[uploads/ Stored Files]
+    DB --> SQLITE[instance/lan_fileserver.db]
+
+    APP --> TPL[templates/ Jinja Pages]
+    APP --> CSS[static/styles.css]
+
+    TPL --> U
+    CSS --> U
+    APP -->|File download response| U
+```
+
+## Repository Structure
+
+```mermaid
+flowchart TD
+    ROOT[LAN_filesever2/] --> APP[app.py]
+    ROOT --> AUTH[auth.py]
+    ROOT --> CFG[config.py]
+    ROOT --> DB[db.py]
+    ROOT --> FS[file_service.py]
+    ROOT --> REQ[requirements.txt]
+    ROOT --> README[README.md]
+    ROOT --> PSTRUCT[PROJECT_STRUCTURE.md]
+    ROOT --> DESIGN[LAN_fileserver.md]
+    ROOT --> LIC[LICENSE]
+
+    ROOT --> TEMPLATES[templates/]
+    TEMPLATES --> BASE[base.html]
+    TEMPLATES --> LANDING[landing.html]
+    TEMPLATES --> LOGIN[login.html]
+    TEMPLATES --> REGISTER[register.html]
+    TEMPLATES --> FILES[files.html]
+
+    ROOT --> STATIC[static/]
+    STATIC --> STYLES[styles.css]
+
+    ROOT --> DOCS[docs/]
+    DOCS --> GETSTARTED[GETTING_STARTED.md]
+
+    ROOT --> SCRIPTS[scripts/]
+    SCRIPTS --> DEVRUN[dev_run.sh]
+
+    ROOT --> TESTS[tests/]
+    TESTS --> TESTREADME[README.md]
+
+    ROOT --> INSTANCE[instance/]
+    INSTANCE --> SQLITE[lan_fileserver.db]
+
+    ROOT --> UPLOADS[uploads/]
+```
+
 ## Features
 
 - Landing, sign-up, sign-in, and sign-out flows
@@ -19,10 +84,6 @@ A modular Flask + SQLite LAN file-sharing web app with user authentication, file
 - Database: SQLite
 - Frontend: Jinja2 templates + CSS
 - Security: Werkzeug password hashing + HTTPS runtime options
-
-## Project Structure
-
-See [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) for a full structure guide and extension conventions.
 
 ## Prerequisites
 
